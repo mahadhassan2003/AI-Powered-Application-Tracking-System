@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anthrix ATS - Hackathon Pitch Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #090D16;
+      color: #F8FAFC;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      user-select: none;
+    }
+
+    /* Progress Bar */
+    .progress-bar-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 100;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 8.33%;
+      background: linear-gradient(90deg, #6366F1, #0EA5E9);
+      transition: width 0.3s ease;
+    }
+
+    /* Slide Deck Container */
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 3.5rem 6rem 4.5rem;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.98);
+      transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+    }
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+    }
+
+    /* Top Badges & Headings */
+    .category-badge {
+      display: inline-block;
+      align-self: flex-start;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #818CF8;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 0.3rem 0.8rem;
+      border-radius: 9999px;
+      margin-bottom: 0.6rem;
+    }
+
+    .slide-title {
+      font-size: 2.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 0.4rem;
+      background: linear-gradient(135deg, #FFFFFF 40%, #CBD5E1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-subtitle {
+      font-size: 1.1rem;
+      color: #94A3B8;
+      max-width: 950px;
+      margin-bottom: 1.5rem;
+      line-height: 1.45;
+    }
+
+    /* Statement Banner */
+    .statement-banner {
+      background: #131B2E;
+      border: 1.5px solid #F43F5E;
+      border-radius: 1rem;
+      padding: 1.25rem 1.75rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .statement-tag {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #FB7185;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+    }
+    .statement-text {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.45;
+    }
+
+    /* Card Grids */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      flex: 1;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      flex: 1;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      flex: 1;
+    }
+
+    .grid-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.75rem;
+      flex: 1;
+    }
+
+    /* Card Design */
+    .card {
+      background: #131B2E;
+      border: 1px solid #1E293B;
+      border-radius: 1.25rem;
+      padding: 1.5rem 1.75rem;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 1.5rem;
+      right: 1.5rem;
+      height: 3px;
+      background: #6366F1;
+      border-radius: 9999px;
+    }
+    .card.accent-rose::before { background: #F43F5E; }
+    .card.accent-amber::before { background: #F59E0B; }
+    .card.accent-cyan::before { background: #0EA5E9; }
+    .card.accent-emerald::before { background: #10B981; }
+
+    .card-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+    .card.accent-rose .card-tag { color: #FB7185; }
+    .card.accent-amber .card-tag { color: #FBBF24; }
+    .card.accent-cyan .card-tag { color: #38BDF8; }
+    .card.accent-emerald .card-tag { color: #34D399; }
+    .card:not([class*="accent-"]) .card-tag { color: #818CF8; }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      color: #E2E8F0;
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+    .card-list li {
+      position: relative;
+      padding-left: 1.3rem;
+    }
+    .card-list li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      top: -2px;
+      font-size: 1.3rem;
+      color: #6366F1;
+    }
+    .card.accent-rose .card-list li::before { color: #F43F5E; }
+    .card.accent-amber .card-list li::before { color: #F59E0B; }
+    .card.accent-cyan .card-list li::before { color: #0EA5E9; }
+    .card.accent-emerald .card-list li::before { color: #10B981; }
+
+    /* Metric Cards */
+    .metric-card {
+      background: #131B2E;
+      border: 1px solid #1E293B;
+      border-radius: 1.25rem;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+    .metric-num {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.03em;
+    }
+    .metric-label {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 0.5rem;
+    }
+    .metric-desc {
+      font-size: 0.95rem;
+      color: #94A3B8;
+      line-height: 1.4;
+    }
+
+    /* Title Slide Specifics */
+    .slide-title-hero {
+      justify-content: center;
+      align-items: flex-start;
+      padding-left: 8rem;
+    }
+    .hero-badge {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #38BDF8;
+      background: rgba(14, 165, 233, 0.1);
+      border: 1px solid rgba(14, 165, 233, 0.3);
+      padding: 0.4rem 1.2rem;
+      border-radius: 9999px;
+      margin-bottom: 1.5rem;
+    }
+    .hero-title {
+      font-size: 4.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #FFFFFF 0%, #A5B4FC 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-hook {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: #818CF8;
+      margin-bottom: 1.5rem;
+      max-width: 900px;
+    }
+    .hero-desc {
+      font-size: 1.25rem;
+      color: #94A3B8;
+      max-width: 800px;
+      line-height: 1.6;
+      margin-bottom: 3rem;
+    }
+    .hero-footer {
+      font-size: 1rem;
+      color: #64748B;
+      font-weight: 500;
+    }
+
+    /* Final Slide Specifics */
+    .cta-card {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(14, 165, 233, 0.05));
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      border-radius: 1.25rem;
+      padding: 2.25rem;
+      margin-top: 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .cta-left h3 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 0.4rem;
+    }
+    .cta-left p {
+      font-size: 1.05rem;
+      color: #94A3B8;
+    }
+
+    /* Navigation Controls */
+    .controls {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      z-index: 100;
+      background: rgba(19, 27, 46, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      border: 1px solid #1E293B;
+    }
+    .slide-counter {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #94A3B8;
+    }
+    .btn-nav {
+      background: #1E293B;
+      border: none;
+      color: #FFFFFF;
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: background 0.2s;
+    }
+    .btn-nav:hover {
+      background: #6366F1;
+    }
+    .btn-notes {
+      background: transparent;
+      border: 1px solid #334155;
+      color: #94A3B8;
+      padding: 0.35rem 0.8rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-notes:hover {
+      border-color: #6366F1;
+      color: #FFFFFF;
+    }
+
+    /* Speaker Notes Drawer */
+    .notes-drawer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 220px;
+      background: #0B0F19;
+      border-top: 2px solid #6366F1;
+      padding: 1.5rem 3rem;
+      z-index: 90;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .notes-drawer.open {
+      transform: translateY(0);
+    }
+    .notes-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #818CF8;
+      margin-bottom: 0.5rem;
+    }
+    .notes-text {
+      font-size: 1.05rem;
+      color: #E2E8F0;
+      line-height: 1.6;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- Main Slides Container -->
+  <div class="deck-container" id="deckContainer">
+
+    <!-- Slide 1: Cover -->
+    <div class="slide slide-title-hero active" data-notes="Welcome judges and audience! Today we're thrilled to present Anthrix ATS. The recruitment world today is fundamentally broken. Recruiters are drowning in hundreds of unranked resumes, candidates are ghosted in black holes, and offers collapse at the final mile. Anthrix transforms this entire journey into a high-velocity, intelligent talent engine.">
+      <div class="hero-badge">Hackathon Pitch • Next-Gen Talent Platform</div>
+      <h1 class="hero-title">ANTHRIX ATS</h1>
+      <div class="hero-hook">Transforming Hiring from a Broken Black Hole into an Intelligent Talent Engine</div>
+      <p class="hero-desc">The unified talent platform that intelligently parses candidate capabilities, evaluates true contextual fit, streamlines two-way interview scheduling, and closes candidates with dynamic offer negotiations.</p>
+      <div class="hero-footer">Presented by Team Anthrix • Production-Ready Platform</div>
+    </div>
+
+    <!-- Slide 2: Problem Statement (NEW SLIDE) -->
+    <div class="slide" data-notes="Here is our core problem statement: Organizations lose their highest-impact talent not because there are too few applicants, but because legacy recruiting processes are keyword-blind, operationally sluggish, and completely incapable of collaborative closing. Recruiters suffer burnout skimming resumes in 6 seconds; businesses stall for 42+ days losing thousands per vacancy; and candidates face a disrespectful black hole with zero transparency.">
+      <div class="category-badge">Executive Focus</div>
+      <h2 class="slide-title">Problem Statement: The Broken Talent Pipeline</h2>
+      <p class="slide-subtitle">Modern recruitment fails both the organizations trying to scale and the candidates seeking to join them.</p>
+      
+      <div class="statement-banner">
+        <div class="statement-tag">The Core Problem Statement</div>
+        <div class="statement-text">“Hiring organizations lose their highest-impact talent not due to a shortage of applicants, but because legacy hiring processes are keyword-blind, operationally sluggish, and completely incapable of collaborative closing.”</div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card accent-rose">
+          <div class="card-tag">Recruiter Pain</div>
+          <div class="card-title">Recruiter Burnout</div>
+          <ul class="card-list">
+            <li>250+ resumes per role causes severe decision fatigue.</li>
+            <li>6-second skims filter out up to 88% of real talent.</li>
+            <li>Rigid keyword traps reward buzzwords over actual capability.</li>
+            <li>Hours lost manually coordinating calendars and writing emails.</li>
+          </ul>
+        </div>
+        <div class="card accent-amber">
+          <div class="card-tag">Business Pain</div>
+          <div class="card-title">Hiring Velocity Drag</div>
+          <ul class="card-list">
+            <li>42-day average hiring cycle stalls critical business growth.</li>
+            <li>Costs over $4,500+ per open vacancy in lost productivity.</li>
+            <li>Endless email chains cause finalists to accept competing offers.</li>
+            <li>Chaotic closing stage creates last-mile candidate drop-off.</li>
+          </ul>
+        </div>
+        <div class="card accent-cyan">
+          <div class="card-tag">Candidate Pain</div>
+          <div class="card-title">Candidate Black Hole</div>
+          <ul class="card-list">
+            <li>Painful 20-minute application forms cause 60%+ drop-off.</li>
+            <li>Applicants wait weeks with zero feedback or status updates.</li>
+            <li>One-sided, non-negotiable offers alienate top prospects.</li>
+            <li>Damages corporate employer brand and future candidate goodwill.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3: The 3 Critical Pain Points -->
+    <div class="slide" data-notes="Let's look at the operational friction points. The 250+ resume tsunami creates overwhelming volume that leads recruiters to hasty 6-second rejections. The 42-day process drags on as emails bounce back and forth just to pick an interview time. And at the end, offer negotiation is handled in static PDF attachments and chaotic phone calls where finalists drop out at the one-yard line.">
+      <div class="category-badge">Market Reality</div>
+      <h2 class="slide-title">The Reality on the Ground: 3 Critical Friction Points</h2>
+      <p class="slide-subtitle">Where recruitment pipelines hemorrhage time, budget, and top performers.</p>
+      <div class="grid-3">
+        <div class="card accent-rose">
+          <div class="card-tag">Volume Crisis</div>
+          <div class="card-title">The 250+ Resume Tsunami</div>
+          <ul class="card-list">
+            <li>Every open job receives hundreds of resumes within 48 hours.</li>
+            <li>Recruiters spend an average of just 6 seconds per resume skimming for buzzwords.</li>
+            <li>Up to 88% of qualified applicants are disqualified by simplistic keyword filters.</li>
+            <li>Massive recruiter cognitive burnout and screening exhaustion.</li>
+          </ul>
+        </div>
+        <div class="card accent-amber">
+          <div class="card-tag">Process Friction</div>
+          <div class="card-title">The 42-Day Black Hole</div>
+          <ul class="card-list">
+            <li>Average corporate time-to-hire has stretched past 42 days.</li>
+            <li>Manual interview scheduling involves endless back-and-forth emails.</li>
+            <li>Candidates wait weeks in complete silence with zero transparency.</li>
+            <li>Top tier talent accepts competing offers before interviews are scheduled.</li>
+          </ul>
+        </div>
+        <div class="card accent-indigo">
+          <div class="card-tag">Closing Failure</div>
+          <div class="card-title">The Broken Closing Stage</div>
+          <ul class="card-list">
+            <li>Offer creation is handled in static Word/PDF docs and disjointed emails.</li>
+            <li>Salary negotiations are chaotic, delayed, and lack market intelligence.</li>
+            <li>No unified post-offer onboarding bridge; newly hired talent drops off.</li>
+            <li>Companies lose their chosen finalist at the 1-yard line.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4: Why Legacy ATS Fail -->
+    <div class="slide" data-notes="Why haven't existing systems solved this? Because legacy platforms were built 15 years ago as passive databases. They match literal text strings, heavily rewarding candidates who keyword-stuff. Hiring teams are forced to buy 4-5 disconnected tools for scheduling, emailing, and offer signing, while forcing candidates through clunky 20-minute application portals.">
+      <div class="category-badge">Market Gap</div>
+      <h2 class="slide-title">Why Legacy Applicant Tracking Systems Fail</h2>
+      <p class="slide-subtitle">Traditional platforms act as glorified digital filing cabinets instead of intelligent recruitment engines.</p>
+      <div class="grid-2">
+        <div class="card accent-rose">
+          <div class="card-tag">Flawed Evaluation</div>
+          <div class="card-title">Dumb Keyword Matching</div>
+          <ul class="card-list">
+            <li>Matches literal text strings, heavily rewarding candidates who 'keyword-stuff' their CV.</li>
+            <li>Completely blind to human context, depth of responsibility, and transferable experience.</li>
+            <li>Disqualifies brilliant career switchers and high-potential performers.</li>
+          </ul>
+        </div>
+        <div class="card accent-amber">
+          <div class="card-tag">Workflow Chaos</div>
+          <div class="card-title">Fragmented Point Solutions</div>
+          <ul class="card-list">
+            <li>Hiring teams juggle 4-5 disparate subscriptions for sourcing, calendar links, and e-signatures.</li>
+            <li>Data gets isolated in silos with zero unified timeline across the candidate journey.</li>
+            <li>Astronomical software licensing costs and administrative chaos.</li>
+          </ul>
+        </div>
+        <div class="card accent-cyan">
+          <div class="card-tag">Candidate Disconnect</div>
+          <div class="card-title">Zero Candidate Respect & Visibility</div>
+          <ul class="card-list">
+            <li>Tedious 20-minute mandatory account creation portals cause over 60% candidate drop-off.</li>
+            <li>Candidates receive zero status updates or feedback once their resume is submitted.</li>
+            <li>Damages the company's employer brand and tarnishes future talent pipelines.</li>
+          </ul>
+        </div>
+        <div class="card accent-indigo">
+          <div class="card-tag">Missing Closing Layer</div>
+          <div class="card-title">Zero Negotiation Intelligence</div>
+          <ul class="card-list">
+            <li>Existing platforms abruptly end at the interview feedback stage.</li>
+            <li>Provide zero market intelligence on whether a compensation offer is competitive.</li>
+            <li>No collaborative mechanism for recruiters and candidates to align on package terms.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5: The Solution -->
+    <div class="slide" data-notes="Anthrix ATS is the all-in-one answer. We unite the entire lifecycle into four seamless pillars: First, intelligent multi-layer parsing that extracts structured candidate profiles with zero manual entry. Second, contextual fit scoring that evaluates depth and potential. Third, an interactive two-way scheduling pipeline. And fourth, our standout differentiator: an interactive offer negotiation engine that turns candidate offers into confirmed hires.">
+      <div class="category-badge">The Solution</div>
+      <h2 class="slide-title">Anthrix ATS: The Unified Talent Engine</h2>
+      <p class="slide-subtitle">One cohesive platform that seamlessly guides every step from first application to first day on the job.</p>
+      <div class="grid-4">
+        <div class="card accent-cyan">
+          <div class="card-tag">Discover</div>
+          <div class="card-title">1. Intelligent Parsing</div>
+          <ul class="card-list">
+            <li>Multi-layer extraction reads beyond formatting.</li>
+            <li>Pulls skills, career history, education, and credentials instantly.</li>
+            <li>Eliminates all manual candidate data entry.</li>
+          </ul>
+        </div>
+        <div class="card accent-indigo">
+          <div class="card-tag">Evaluate</div>
+          <div class="card-title">2. Contextual Scoring</div>
+          <ul class="card-list">
+            <li>Deep semantic comprehension of role expectations.</li>
+            <li>Evaluates depth of experience, not just buzzwords.</li>
+            <li>Surfaces top 5% talent in instant leaderboards.</li>
+          </ul>
+        </div>
+        <div class="card accent-emerald">
+          <div class="card-tag">Engage</div>
+          <div class="card-title">3. Frictionless Pipeline</div>
+          <ul class="card-list">
+            <li>Dual Kanban & Table views with bulk progression.</li>
+            <li>Interactive 2-way interview scheduling.</li>
+            <li>Collaborative reschedule windows with zero no-shows.</li>
+          </ul>
+        </div>
+        <div class="card accent-amber">
+          <div class="card-tag">Close</div>
+          <div class="card-title">4. Negotiation Engine</div>
+          <ul class="card-list">
+            <li>AI-assisted formal offer letter drafting in seconds.</li>
+            <li>Live market salary competitiveness analysis.</li>
+            <li>Interactive multi-round counter-offer negotiations.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6: Core Innovation - Contextual Scoring -->
+    <div class="slide" data-notes="Let's look at how we score candidates. Rather than counting how many times a keyword appears, Anthrix uses a weighted multi-dimensional fit formula: 50% for capability alignment, 30% for verified career trajectory and seniority, 20% for overall mission fit, plus credential weighting. Recruiters get an instant leaderboard ranking the top 5th percentile with full transparency on why each candidate received their score.">
+      <div class="category-badge">Core Innovation</div>
+      <h2 class="slide-title">Contextual Candidate Match & Leaderboards</h2>
+      <p class="slide-subtitle">Eliminating keyword manipulation and bias through multi-dimensional capability evaluation.</p>
+      <div class="grid-2">
+        <div class="card accent-indigo">
+          <div class="card-tag">Objective Evaluation</div>
+          <div class="card-title">Multi-Dimensional Fit Formula</div>
+          <ul class="card-list">
+            <li><strong>Semantic Capability Alignment (50%):</strong> Deeply understands the conceptual meaning of project achievements and technical breadth.</li>
+            <li><strong>Experience Depth Verification (30%):</strong> Analyzes seniority, tenure progression, and demonstrated ownership rather than just raw calendar years.</li>
+            <li><strong>Semantic Mission Fit (20%):</strong> Evaluates holistic candidate career trajectory against team goals and role expectations.</li>
+            <li><strong>Academic & Credential Weighting:</strong> Objective bonus allocation for verified advanced degrees and relevant certifications.</li>
+            <li><strong>Full Explainability:</strong> Complete breakdown available to recruiters so hiring decisions are grounded in clear data.</li>
+          </ul>
+        </div>
+        <div class="card accent-cyan">
+          <div class="card-tag">Recruiter Superpower</div>
+          <div class="card-title">The Screening Advantage</div>
+          <ul class="card-list">
+            <li><strong>Instant Leaderboard Ranking:</strong> Automatically highlights the top 5% candidates the moment resumes are submitted.</li>
+            <li><strong>One-Click Advance:</strong> Batch shortlist and advance the highest scoring candidates to interviews with a single click.</li>
+            <li><strong>Semantic Tolerance:</strong> Intelligently knows that containerization relates to Kubernetes, or that React implies modern frontend ability.</li>
+            <li><strong>Instant Review Time:</strong> Slashes initial candidate screening time from 15 minutes down to 30 seconds per profile.</li>
+            <li><strong>Exportable Hiring Reports:</strong> Download comprehensive scoring breakdowns for hiring committee review meetings.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7: Pipeline & Scheduling -->
+    <div class="slide" data-notes="Once candidates are ranked, recruiters manage their pipeline through intuitive Kanban or high-density table views. When scheduling interviews, Anthrix eliminates the 8-email chain. Candidates receive direct invitation links to confirm. If a conflict arises, candidates can propose alternative windows with their rationale, which recruiters can approve in one click. Automated reminders guarantee zero interview no-shows.">
+      <div class="category-badge">Operational Excellence</div>
+      <h2 class="slide-title">Visual Pipeline & Two-Way Interview Scheduling</h2>
+      <p class="slide-subtitle">Accelerate candidates through the funnel with interactive calendar coordination and zero email tennis.</p>
+      <div class="grid-3">
+        <div class="card accent-indigo">
+          <div class="card-tag">Pipeline Command</div>
+          <div class="card-title">Dual-View Funnel</div>
+          <ul class="card-list">
+            <li><strong>Interactive Kanban:</strong> Drag-and-drop candidates across Applied, Interview, Offer, and Hired stages.</li>
+            <li><strong>High-Density Table:</strong> Quick sorting by match score, application date, candidate name, and status.</li>
+            <li><strong>Slide-Out Profile Drawer:</strong> Review parsed credentials and original documents side-by-side without leaving the page.</li>
+            <li><strong>Bulk Actions:</strong> Move top candidates forward or send personalized bulk updates instantly.</li>
+          </ul>
+        </div>
+        <div class="card accent-emerald">
+          <div class="card-tag">Frictionless Booking</div>
+          <div class="card-title">Two-Way Scheduling</div>
+          <ul class="card-list">
+            <li><strong>Multi-Format Interviews:</strong> Support for phone, video meeting, technical panel, or on-site visits.</li>
+            <li><strong>One-Click Confirmation:</strong> Candidates receive dedicated invitation links and confirm attendance with one tap.</li>
+            <li><strong>Integrated Meeting Links:</strong> Automatically embeds video links and preparation notes into invitations.</li>
+            <li><strong>Automated Reminders:</strong> Proactive milestone alerts eliminate costly interview no-shows.</li>
+          </ul>
+        </div>
+        <div class="card accent-amber">
+          <div class="card-tag">Smart Coordination</div>
+          <div class="card-title">Collaborative Rescheduling</div>
+          <ul class="card-list">
+            <li><strong>Candidate Reschedule Window:</strong> Candidates can propose new times and state clear reasons inside the portal.</li>
+            <li><strong>One-Click Recruiter Review:</strong> Review proposed alternative times and approve, counter, or decline immediately.</li>
+            <li><strong>Ends Email Tennis:</strong> Replaces chaotic multi-day scheduling threads with instant resolution.</li>
+            <li><strong>Candidate Retention:</strong> Keeps finalists warm and respected even when unexpected calendar conflicts arise.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 8: Offer & Negotiation Engine -->
+    <div class="slide" data-notes="Now, this is our true industry-first differentiator: The Offer Negotiation Engine. In most companies, making an offer involves drafting a Word doc, sending a PDF, and enduring tense back-and-forth phone calls. Anthrix generates executive-ready offer letters in seconds, checks real-time market salary competitiveness, and provides an interactive portal where candidates can review their package, request adjustments, and accept. Upon acceptance, they are immediately transitioned into the onboarding pipeline.">
+      <div class="category-badge">Our Superpower</div>
+      <h2 class="slide-title">The Interactive Offer & Negotiation Engine</h2>
+      <p class="slide-subtitle">The first recruiting platform with native compensation benchmarking, interactive counter-offers, and closing workflows.</p>
+      <div class="grid-2">
+        <div class="card accent-indigo">
+          <div class="card-tag">Creation & Intelligence</div>
+          <div class="card-title">AI-Assisted Offer Creation</div>
+          <ul class="card-list">
+            <li><strong>Instant Formal Drafting:</strong> Generates beautifully structured, highly persuasive offer letters in seconds.</li>
+            <li><strong>Live Market Benchmarking:</strong> Analyzes base salary against market standards (identifies below-market, competitive, or above-market tiers).</li>
+            <li><strong>Comprehensive Packages:</strong> Structured support for base salary, signing bonus, equity options, and custom perks.</li>
+            <li><strong>Automated PDF Generation:</strong> One-click compilation of branded, formal offer letters with corporate letterhead.</li>
+            <li><strong>Expiry Timers & Alerts:</strong> Built-in response deadlines with gentle automated reminder notifications.</li>
+          </ul>
+        </div>
+        <div class="card accent-emerald">
+          <div class="card-tag">Closing & Conversion</div>
+          <div class="card-title">Collaborative Counter-Offers</div>
+          <ul class="card-list">
+            <li><strong>Candidate Empowerment:</strong> Candidates review comprehensive compensation breakdowns and propose counters transparently.</li>
+            <li><strong>Negotiation Rounds:</strong> Complete audit trail tracking requested adjustments with candidate reasoning.</li>
+            <li><strong>One-Click Terms Application:</strong> When a counter is accepted, offer terms update automatically and re-generate official documents.</li>
+            <li><strong>Immediate Onboarding Bridge:</strong> Candidate acceptance automatically transitions their status to 'Hired'.</li>
+            <li><strong>HR Compliance Starter:</strong> Establishes employee record with emergency contacts, tax forms (W4, I9), and NDA workflows.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 9: Candidate & Recruiter Experience -->
+    <div class="slide" data-notes="Anthrix is engineered with human-centered empathy. Candidates can apply in under 60 seconds as a guest with no password required, claim their account later, and track their application in real time. On the recruiter side, recruiters can connect their corporate email directly and use our template generator to dispatch personalized candidate outreach campaigns with zero manual typing errors.">
+      <div class="category-badge">Human-Centered Design</div>
+      <h2 class="slide-title">Empowering Both Candidates & Recruiters</h2>
+      <p class="slide-subtitle">Delivering world-class candidate respect while giving recruiters time-saving automation superpowers.</p>
+      <div class="grid-2">
+        <div class="card accent-cyan">
+          <div class="card-tag">Candidate Journey</div>
+          <div class="card-title">Respect, Speed & Transparency</div>
+          <ul class="card-list">
+            <li><strong>60-Second Guest Application:</strong> Upload a resume and apply instantly with zero mandatory password creation gates.</li>
+            <li><strong>Seamless Account Claiming:</strong> Candidates can claim their temporary profile at any time to check status.</li>
+            <li><strong>Real-Time Pipeline Visibility:</strong> Live tracking ends the dreaded 'did they even read my resume' black hole anxiety.</li>
+            <li><strong>Empowered Communication:</strong> Propose interview times and negotiate compensation without intimidating phone friction.</li>
+            <li><strong>Polite Status Updates:</strong> Every applicant receives courteous communication at each stage of the funnel.</li>
+          </ul>
+        </div>
+        <div class="card accent-amber">
+          <div class="card-tag">Recruiter Efficiency</div>
+          <div class="card-title">High-Converting Outreach</div>
+          <ul class="card-list">
+            <li><strong>Smart Campaign Generation:</strong> Draft targeted, highly persuasive outreach email templates in seconds.</li>
+            <li><strong>Corporate Email Integration:</strong> Sends from the recruiter's authenticated email account, maximizing inbox delivery.</li>
+            <li><strong>Automated Variable Personalization:</strong> Populates candidate names, roles, and dates with zero copy-paste errors.</li>
+            <li><strong>Batch Email Delivery:</strong> Safely send interview reminders and courteous status updates across hundreds of applicants.</li>
+            <li><strong>Real-Time Delivery Metrics:</strong> Track sent, delivered, and pending emails across candidate cohorts.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 10: Measurable Business Impact -->
+    <div class="slide" data-notes="What does this mean for the bottom line? By automating multi-layer screening, teams save 75% of initial review time. By eliminating email ping-pong and streamlining negotiations, average time-to-hire is cut by 18 days. Furthermore, because negotiations are transparent and collaborative, offer acceptance rates jump to 94%, while candidate ghosting drops to absolute zero.">
+      <div class="category-badge">Measurable Value</div>
+      <h2 class="slide-title">Proven Business Impact & ROI</h2>
+      <p class="slide-subtitle">How Anthrix ATS transforms hiring metrics, team productivity, and employer brand reputation.</p>
+      <div class="grid-metrics">
+        <div class="metric-card">
+          <div class="metric-num" style="color: #10B981;">75%</div>
+          <div class="metric-label">Screening Time Saved</div>
+          <div class="metric-desc">Automated resume parsing and semantic ranking cut initial review time from hours of skimming down to minutes of decision-making.</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num" style="color: #0EA5E9;">18 Days</div>
+          <div class="metric-label">Reduction in Time-to-Hire</div>
+          <div class="metric-desc">Two-way scheduling and live negotiation loops cut standard corporate hiring cycles by more than half, locking in talent fast.</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num" style="color: #F59E0B;">94%</div>
+          <div class="metric-label">Offer Acceptance Rate</div>
+          <div class="metric-desc">Interactive compensation counter-offers resolve candidate hesitations collaboratively before top talent wanders away.</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num" style="color: #818CF8;">0%</div>
+          <div class="metric-label">Candidate Ghosting</div>
+          <div class="metric-desc">Automated milestone communication guarantees 100% of applicants receive timely, transparent, and respectful status updates.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 11: Competitive Advantage -->
+    <div class="slide" data-notes="When we look at the competitive landscape, legacy systems rely on literal keyword matching, force manual scheduling, and produce static offer letters. Point tools only solve one isolated slice of the puzzle. Anthrix ATS is the only unified ecosystem combining deep semantic comprehension, collaborative scheduling, and an interactive negotiation engine in one integrated experience.">
+      <div class="category-badge">Market Advantage</div>
+      <h2 class="slide-title">Why Anthrix ATS Wins in the Market</h2>
+      <p class="slide-subtitle">Comparing Anthrix ATS against legacy enterprise platforms and isolated point tools.</p>
+      <div class="grid-3">
+        <div class="card accent-rose">
+          <div class="card-tag">Legacy Incumbents</div>
+          <div class="card-title">Legacy ATS Platforms</div>
+          <ul class="card-list">
+            <li><strong>Keyword Search:</strong> Literal text matching that rewards keyword stuffers and misses real talent.</li>
+            <li><strong>Manual Scheduling:</strong> Days lost in email tennis to book a single meeting.</li>
+            <li><strong>Static Offers:</strong> Word doc templates emailed as attachments with zero negotiation intelligence.</li>
+            <li><strong>Clunky UX:</strong> Painful 20-minute application portals leading to 60%+ candidate drop-off.</li>
+          </ul>
+        </div>
+        <div class="card accent-amber">
+          <div class="card-tag">Niche Tools</div>
+          <div class="card-title">Point Scheduling Tools</div>
+          <ul class="card-list">
+            <li><strong>Siloed Functionality:</strong> Only handles calendar links or simple chatbot screens.</li>
+            <li><strong>No Core Pipeline:</strong> Must be awkwardly integrated with separate tracking systems.</li>
+            <li><strong>Zero Offer Layer:</strong> Completely drops off once the interview ends.</li>
+            <li><strong>Multi-Subscription Cost:</strong> Forces hiring teams to pay for multiple software licenses.</li>
+          </ul>
+        </div>
+        <div class="card accent-emerald">
+          <div class="card-tag">Anthrix Advantage</div>
+          <div class="card-title">Anthrix ATS</div>
+          <ul class="card-list">
+            <li><strong>Contextual Fit:</strong> Understands true candidate potential, seniority, and demonstrated achievements.</li>
+            <li><strong>Two-Way Calendar:</strong> Built-in candidate confirmation and collaborative reschedule windows.</li>
+            <li><strong>Live Negotiation:</strong> Real-time salary benchmarking and interactive counter-offers.</li>
+            <li><strong>Unified Journey:</strong> Sourcing, ranking, scheduling, closing, and onboarding all in one place.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 12: Conclusion & CTA -->
+    <div class="slide" data-notes="To conclude: Hiring shouldn't be about sorting paperwork. It should be about connecting great humans to great missions. Anthrix ATS eliminates the 42-day drag, treats candidates with dignity, and empowers hiring teams to close the best talent in the world. Our platform is live and fully working, and we can't wait to show you a live demonstration. Thank you!">
+      <div class="category-badge">Summary & Closing</div>
+      <h2 class="slide-title" style="font-size: 3rem; margin-top: 1rem;">Hiring Shouldn't Be About Paperwork.</h2>
+      <p class="hero-hook" style="font-size: 2.2rem; color: #38BDF8; margin-bottom: 2rem;">It Should Be Connecting Great Humans to Great Missions.</p>
+      
+      <div style="display: flex; flex-direction: column; gap: 1rem; max-width: 950px; font-size: 1.25rem; color: #CBD5E1; line-height: 1.6;">
+        <p>✔ <strong>Eliminates Screening Burnout:</strong> Instant semantic match scores cut screening time by 75%.</p>
+        <p>✔ <strong>Brings Humanity Back:</strong> Zero ghosting, instant guest applications, and real-time status visibility.</p>
+        <p>✔ <strong>Closes the Deal:</strong> Industry-first interactive offer negotiation engine turns finalists into accepted hires.</p>
+      </div>
+
+      <div class="cta-card">
+        <div class="cta-left">
+          <h3>Ready for Live Demonstration</h3>
+          <p>Let's walk through a live candidate application, instant ranking leaderboard, and offer negotiation!</p>
+        </div>
+        <div style="font-size: 1.5rem; font-weight: 800; color: #818CF8; background: rgba(99, 102, 241, 0.2); padding: 0.8rem 1.8rem; border-radius: 9999px; border: 1px solid #6366F1;">
+          Live Demo & Q&A
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Navigation Controls -->
+  <div class="controls">
+    <button class="btn-notes" id="toggleNotesBtn">📝 Speaker Notes</button>
+    <button class="btn-nav" id="prevBtn" title="Previous Slide (Left Arrow)">❮</button>
+    <div class="slide-counter" id="slideCounter">1 / 12</div>
+    <button class="btn-nav" id="nextBtn" title="Next Slide (Right Arrow)">❯</button>
+  </div>
+
+  <!-- Speaker Notes Drawer -->
+  <div class="notes-drawer" id="notesDrawer">
+    <div class="notes-title">SPEAKER SCRIPT / PITCH NOTES</div>
+    <div class="notes-text" id="notesText"></div>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const progressBar = document.getElementById('progressBar');
+    const slideCounter = document.getElementById('slideCounter');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const toggleNotesBtn = document.getElementById('toggleNotesBtn');
+    const notesDrawer = document.getElementById('notesDrawer');
+    const notesText = document.getElementById('notesText');
+
+    let currentSlide = 0;
+    const totalSlides = slides.length;
+
+    function updateSlide(index) {
+      if (index < 0) index = 0;
+      if (index >= totalSlides) index = totalSlides - 1;
+
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+      });
+
+      currentSlide = index;
+      progressBar.style.width = `${((index + 1) / totalSlides) * 100}%`;
+      slideCounter.textContent = `${index + 1} / ${totalSlides}`;
+
+      // Update speaker notes
+      const notes = slides[index].getAttribute('data-notes') || 'No speaker notes for this slide.';
+      notesText.textContent = notes;
+    }
+
+    prevBtn.addEventListener('click', () => updateSlide(currentSlide - 1));
+    nextBtn.addEventListener('click', () => updateSlide(currentSlide + 1));
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        updateSlide(currentSlide + 1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        updateSlide(currentSlide - 1);
+      } else if (e.key === 'Home') {
+        updateSlide(0);
+      } else if (e.key === 'End') {
+        updateSlide(totalSlides - 1);
+      } else if (e.key.toLowerCase() === 'n') {
+        notesDrawer.classList.toggle('open');
+      }
+    });
+
+    toggleNotesBtn.addEventListener('click', () => {
+      notesDrawer.classList.toggle('open');
+    });
+
+    // Initialize first slide
+    updateSlide(0);
+  </script>
+</body>
+</html>

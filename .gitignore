@@ -1,0 +1,66 @@
+# Environments
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Python Environments
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+coverage.xml
+
+# Node / Frontend
+node_modules/
+.pnp
+.pnp.js
+.next/
+out/
+build/
+dist/
+.DS_Store
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Project specific Runtime Artifacts
+*.db
+*.sqlite3
+Backend/uploads/
+uploads/
+.gemini/
+.git.backup.*
+frontend/.next/
+
+# Cloud secrets & environment files
+*_env.yaml
+backend_env.yaml
+frontend_env.yaml
+*.log
+app_crashes.log
+
+# Large binary SDKs & archives
+gcloud.zip
+google-cloud-sdk/
+*.zip
+*.tar.gz
+
+# Internal debug scripts with hardcoded credentials
+Backend/debug_live.py
+Backend/delete_mock_data.py
+Backend/check_app.py
+Backend/check_apps.py
+Backend/check_resumes.py
+Backend/verify_cleanup.py
+Backend/test_apply.py
+
